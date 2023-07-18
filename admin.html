@@ -216,12 +216,17 @@
             
             var content = '<form><div class="form-group row">';
             content += '<label class="col-sm-2 col-form-label">收款钱包地址</label><div class="col-sm-10">'
-            content += '<input type="text" class="form-control" id="wallet_address">'
+            
+            for(i = 1; i < 6; i++)
+            {
+                content += '<input type="text" class="form-control" value="'+response.data[i].setting_value+'" id="wallet_address_'+i+'">'
+            }
+
             content += '</div></div></form>';
 
             content += '<form><div class="form-group row">';
             content += '<label class="col-sm-2 col-form-label">自动转账额度</label><div class="col-sm-10">'
-            content += '<input type="text" class="form-control" id="auto_transfer_amount">'
+            content += '<input type="text" class="form-control" value="'+response.data[5].setting_value+'" id="auto_transfer_amount">'
             content += '</div></div></form>';
 
             document.getElementById('nav-setting').innerHTML = content;
