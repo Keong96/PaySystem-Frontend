@@ -94,3 +94,7 @@ body {
 	cursor: pointer;
   }
   
+  @font-face {
+	font-family: zh-font;
+	src: url(AaWuHunTi-2.ttf);
+ }
