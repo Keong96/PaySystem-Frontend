@@ -94,7 +94,7 @@
                   content += "<td>"+response.data.data[i]['amount']+"</td>";
                   content += "<td>"+response.data.data[i]['datetime']+"</td>";
 
-                  var status = response.data[i]['status'];
+                  var status = response.data.data[i]['status'];
                   switch(status)
                   {
                     case 0:
