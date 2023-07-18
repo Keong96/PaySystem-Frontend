@@ -69,6 +69,7 @@
         errorModal.style.display = 'block';
     }
 
+    //request
     axios.get("https://paysystem.onrender.com/request/get", {
             headers: { Authorization: `Bearer ${token}` }
           })
@@ -201,6 +202,29 @@
 
             document.getElementById('nav-request').innerHTML = content;
 
+          })
+          .catch(error => {
+              showErrorModal(error.response);
+              console.log(error);
+          });
+
+    //setting
+    axios.get("https://paysystem.onrender.com/setting/get", {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          .then(response => {
+            
+            var content = '<form><div class="form-group row">';
+            content += '<label class="col-sm-2 col-form-label">收款钱包地址</label><div class="col-sm-10">'
+            content += '<input type="text" class="form-control" id="wallet_address">'
+            content += '</div></div></form>';
+
+            content += '<form><div class="form-group row">';
+            content += '<label class="col-sm-2 col-form-label">自动转账额度</label><div class="col-sm-10">'
+            content += '<input type="text" class="form-control" id="auto_transfer_amount">'
+            content += '</div></div></form>';
+
+            document.getElementById('nav-setting').innerHTML = content;
           })
           .catch(error => {
               showErrorModal(error.response);
