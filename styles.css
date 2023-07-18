@@ -101,7 +101,6 @@ body {
 
  .nav-tabs {
 	display: flex;
-	justify-content: space-between;
 	width: 100%;
   }
   

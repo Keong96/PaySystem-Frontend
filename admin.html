@@ -71,9 +71,11 @@
             headers: { Authorization: `Bearer ${token}` }
           })
           .then(response => {
+
               var content = '<table class="table table-striped">';
               content += '<thead><tr><th scope="col">订单号</th><th scope="col">类型</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th scope="col">状态</th><th colspan="2" scope="col" style="text-align:center">Action</th></tr></thead>';
-              
+                alert(response.data);
+                alert(response.data.data);
               for(i = 0; i < response.data.length; i++)
               {
                   content += "<tr>";
