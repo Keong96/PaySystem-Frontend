@@ -39,45 +39,11 @@
     }
     
     const loginButton = document.getElementById("login-button");
-    const registerButton = document.getElementById("register-button");
     const modal = document.querySelector('.modal');
     const modalMessage = document.querySelector('#modal-message');
     const closeButton = document.querySelector('.close');
 
-    const signInButton = document.getElementById('sign-in-button');
-    const signUpButton = document.getElementById('sign-up-button');
     const container = document.querySelector('.container');
-
-    function ShowSignIn()
-    {
-      document.getElementById('sign-in-button').classList.add('active')
-      document.getElementById('sign-up-button').classList.remove('active')
-
-      document.getElementById('sign-in-container').style.display = "block";
-      document.getElementById('sign-in-container').style.opacity = 1;
-      document.getElementById('sign-in-container').style.visibility = "visible";
-
-      document.getElementById('sign-up-container').style.display = "none";
-      document.getElementById('sign-up-container').style.opacity = 0;
-      document.getElementById('sign-up-container').style.visibility = "hidden";
-    }
-
-    function ShowSignUp()
-    {
-      document.getElementById('sign-in-button').classList.remove('active')
-      document.getElementById('sign-up-button').classList.add('active')
-      
-      document.getElementById('sign-in-container').style.display = "none";
-      document.getElementById("sign-in-container").style.opacity = 0;
-      document.getElementById("sign-in-container").style.visibility = "hidden";
-
-      document.getElementById('sign-up-container').style.display = "block";
-      document.getElementById("sign-up-container").style.opacity = 1;
-      document.getElementById("sign-up-container").style.visibility = "visible";
-    }
-
-    signInButton.onclick = ShowSignIn;
-    signUpButton.onclick = ShowSignUp;
 
     // Function to show the modal dialog
     function showModal(message) {
