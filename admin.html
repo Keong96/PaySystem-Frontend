@@ -48,14 +48,15 @@
                 </div>
             </div>
         </div>
-        
+
 </body>
 
 <script>
     
     const errorModal = document.getElementById('error-modal');
     const errorModalMessage = document.getElementById('error-modal-message');
-    
+    const token = localStorage.getItem('token');
+
     function showErrorModal(message) {
         errorModalMessage.innerHTML = message;
         errorModal.style.display = 'block';
