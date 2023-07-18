@@ -17,9 +17,9 @@
     <div class="container">
       <div id="sign-in-container" class="sign-in-container" style="display:block; opacity:1; visibility: visible;">
         <form id="login-form">
-          <input id="sign-in-email" type="email" name="email" placeholder="Email" required="required" />
-          <input id="sign-in-password" type="password" name="password" placeholder="Password" required="required" />
-          <button id="login-button" type="button" class="btn btn-primary btn-block btn-large">Login</button>
+          <input id="sign-in-username" type="text" name="username" placeholder="用户名" required="required" />
+          <input id="sign-in-password" type="password" name="password" placeholder="密码" required="required" />
+          <button id="login-button" type="button" class="btn btn-primary btn-block btn-large">登录</button>
         </form>
       </div>
     </div>
@@ -60,13 +60,13 @@
     closeButton.addEventListener('click', hideModal);
     
     loginButton.addEventListener("click", () => {
-    const email = document.getElementById("sign-in-email").value;
+    const username = document.getElementById("sign-in-username").value;
     const password = document.getElementById("sign-in-password").value;
 
         loginButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
 
         axios.post("https://paysystem.onrender.com/user/login", {
-            email: email,
+            username: username,
             password: password
         },
         {
@@ -84,38 +84,6 @@
             showModal(error.response.data)
         });
     });
-
-    registerButton.addEventListener("click", () => {
-      const email = document.getElementById("sign-up-email").value;
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("sign-up-password").value;
-      const confirmPassword = document.getElementById("confirm-password").value;
-      
-      registerButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
-
-        if(password == confirmPassword)
-        {
-          axios.post("https://weddingappapi.onrender.com/user/create", {
-            email: email,
-            username: username,
-            password: password
-          },
-          {
-          headers: {
-            'Access-Control-Allow-Origin': '*',
-            'Content-Type': 'application/json',
-          }})
-          .then(response => {
-              showModal(response.data)
-              window.location.href = 'login.html';
-          })
-          .catch(error => {
-              console.log(error.response.data);
-              showModal(error.response.data)
-          });
-        }
-    });
-
   </script>
 </body>
 </html>
