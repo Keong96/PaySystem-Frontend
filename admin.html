@@ -74,14 +74,12 @@
 
               var content = '<table class="table table-striped">';
               content += '<thead><tr><th scope="col">订单号</th><th scope="col">类型</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th scope="col">状态</th><th colspan="2" scope="col" style="text-align:center">Action</th></tr></thead>';
-                alert(response.data);
-                alert(response.data.data);
-              for(i = 0; i < response.data.length; i++)
+              for(i = 0; i < response.data.data.length; i++)
               {
                   content += "<tr>";
-                  content += "<td>"+response.data[i]['id']+"</td>";
+                  content += "<td>"+response.data.data[i]['id']+"</td>";
 
-                  var requestType = response.data[i]['request_type'];
+                  var requestType = response.data.data[i]['request_type'];
                   if(requestType == 0)
                   {
                     content += "<td>汇款</td>";
@@ -91,10 +89,10 @@
                     content += "<td>提现</td>";
                   }
                   
-                  content += "<td>"+response.data[i]['sender_address']+"</td>";
-                  content += "<td>"+response.data[i]['receiver_address']+"</td>";
-                  content += "<td>"+response.data[i]['amount']+"</td>";
-                  content += "<td>"+response.data[i]['datetime']+"</td>";
+                  content += "<td>"+response.data.data[i]['sender_address']+"</td>";
+                  content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
+                  content += "<td>"+response.data.data[i]['amount']+"</td>";
+                  content += "<td>"+response.data.data[i]['datetime']+"</td>";
 
                   var status = response.data[i]['status'];
                   switch(status)
