@@ -208,6 +208,43 @@
               console.log(error);
           });
 
+    
+    //action_log
+    axios.get("https://paysystem.onrender.com/action_log/get", {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          .then(response => {
+            
+            var content = '<table class="table table-striped">';
+            content += '<thead><tr><th scope="col">ID</th><th scope="col">用户</th><th scope="col">操作内容</th><th scope="col">时间</th></tr></thead>';
+            for(i = 0; i < response.data.data.length; i++)
+            {
+                axios.get("https://paysystem.onrender.com/user/get/"+response.data.data[i]['user_id'], {
+                    headers: { Authorization: `Bearer ${token}` }
+                })
+                .then(response2 => {
+                    var username = response2.data[0]['username'];
+
+                    content += "<tr>";
+                    content += "<td>"+response.data.data[i]['id']+"</td>";
+                    content += "<td>"+username+"</td>";
+                    content += "<td>"+response.data.data[i]['action']+"</td>";
+                    content += "<td>"+response.data.data[i]['datetime']+"</td>";
+                    content += "</tr>";
+                })
+                .catch(error => {
+                    showErrorModal(error.response);
+                    console.log(error);
+                });
+            }
+
+            document.getElementById('nav-action-log').innerHTML = content;
+          })
+          .catch(error => {
+              showErrorModal(error.response);
+              console.log(error);
+          });
+
     //setting
     axios.get("https://paysystem.onrender.com/setting/get", {
             headers: { Authorization: `Bearer ${token}` }
