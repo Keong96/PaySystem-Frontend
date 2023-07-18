@@ -56,6 +56,11 @@
     const errorModal = document.getElementById('error-modal');
     const errorModalMessage = document.getElementById('error-modal-message');
     const token = localStorage.getItem('token');
+    
+    function hideModal() 
+    {
+        errorModal.style.display = 'none';
+    }
 
     function showErrorModal(message) {
         errorModalMessage.innerHTML = message;
