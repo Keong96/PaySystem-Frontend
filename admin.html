@@ -140,39 +140,48 @@
               content += '<thead><tr><th scope="col">订单号</th><th scope="col">类型</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th scope="col">状态</th><th colspan="2" scope="col" style="text-align:center">Action</th></tr></thead>';
               for(i = 0; i < response.data.data.length; i++)
               {
-                  content += "<tr>";
-                  content += "<td>"+response.data.data[i]['id']+"</td>";
+                var requestType = response.data.data[i]['request_type'];
 
-                  var requestType = response.data.data[i]['request_type'];
-                  if(requestType == 0)
-                  {
-                    content += "<td>汇款</td>";
-                  }
-                  else
-                  {
-                    content += "<td>提现</td>";
-                  }
+                if(requestType == 0)
+                {
+                  content += '<tr class="table-success">';
+                }
+                else
+                {
+                  content += '<tr class="table-danger">';
+                }
                   
-                  content += "<td>"+response.data.data[i]['sender_address']+"</td>";
-                  content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
-                  content += "<td>"+response.data.data[i]['amount']+"</td>";
-                  content += "<td>"+response.data.data[i]['datetime']+"</td>";
+                content += "<td>"+response.data.data[i]['id']+"</td>";
 
-                  var status = response.data.data[i]['status'];
-                  switch(status)
-                  {
-                    case 0:
-                        content += "<td style='color:blue;'>未结算</td>";
+                if(requestType == 0)
+                {
+                  content += "<td>汇款</td>";
+                }
+                else
+                {
+                  content += "<td>提现</td>";
+                }
+                  
+                content += "<td>"+response.data.data[i]['sender_address']+"</td>";
+                content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
+                content += "<td>"+response.data.data[i]['amount']+"</td>";
+                content += "<td>"+response.data.data[i]['datetime']+"</td>";
+
+                var status = response.data.data[i]['status'];
+                switch(status)
+                {
+                  case 0:
+                    content += "<td style='color:blue;'>未结算</td>";
                         break;
-                    case 1:
+                  case 1:
                         content += "<td style='color:red;'>已取消</td>";
                         break;
-                    case 2:
+                  case 2:
                         content += "<td style='color:green;'>已结算</td>";
                         break;
-                  }
+                }
                  
-                  content += "</tr>";
+                content += "</tr>";
               }
               content += "</table>";
               document.getElementById('nav-request').innerHTML = content;
