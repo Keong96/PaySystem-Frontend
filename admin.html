@@ -79,9 +79,9 @@
               for(i = 0; i < response.data.length; i++)
               {
                   content += "<tr>";
-                  content += "<td>"+response.data[i]['id']+"</td>";
+                  content += "<td>"+response.data.record[i]['id']+"</td>";
 
-                  var requestType = response.data[i]['request_type'];
+                  var requestType = response.data.record[i]['request_type'];
                   if(requestType == 0)
                   {
                     content += "<td>汇款</td>";
@@ -91,12 +91,12 @@
                     content += "<td>提现</td>";
                   }
                   
-                  content += "<td>"+response.data[i]['sender_address']+"</td>";
-                  content += "<td>"+response.data[i]['receiver_address']+"</td>";
-                  content += "<td>"+response.data[i]['amount']+"</td>";
-                  content += "<td>"+response.data[i]['datetime']+"</td>";
+                  content += "<td>"+response.data.record[i]['sender_address']+"</td>";
+                  content += "<td>"+response.data.record[i]['receiver_address']+"</td>";
+                  content += "<td>"+response.data.record[i]['amount']+"</td>";
+                  content += "<td>"+response.data.record[i]['datetime']+"</td>";
 
-                  var status = response.data[i]['status'];
+                  var status = response.data.record[i]['status'];
                   switch(status)
                   {
                     case 0:
@@ -115,8 +115,8 @@
               content += "</table>";
               content += "<br><br>"
               content += '<table class="table table-striped"><tr>';
-              content += '<td>今日充值总额 : '+response.data.deposit+'</td>';
-              content += '<td>今日提现总额 : '+response.data.withdraw+'</td>';
+              content += '<td>今日充值总额 : '+response.data.record.deposit+'</td>';
+              content += '<td>今日提现总额 : '+response.data.record.withdraw+'</td>';
               content += '</tr></table>';
 
               document.getElementById('nav-home').innerHTML = content;
