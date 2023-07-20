@@ -95,7 +95,7 @@
 
     function getHome()
     {
-        axios.get("https://paysystem.onrender.com/request/latest/", {
+        axios.get("https://paysystem.onrender.com/request/latest", {
             headers: { Authorization: `Bearer ${token}` }
         })
         .then(response => {
