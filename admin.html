@@ -148,9 +148,9 @@
                 for(i = 0; i < response2.data.length; i++)
                 {
                     content += "<tr>";
-                    content += "<td>"+response2.data[i]['walletAddress']+"</td>";
-                    content += "<td>"+response2.data[i]['today_in']+"</td>";
-                    content += "<td>"+response2.data[i]['today_out']+"</td>";
+                    content += "<td>"+response2.data.data[i]['walletAddress']+"</td>";
+                    content += "<td>"+response2.data.data[i]['today_in']+"</td>";
+                    content += "<td>"+response2.data.data[i]['today_out']+"</td>";
                     content += "</tr>";
                 }
                 content += "</table>";
