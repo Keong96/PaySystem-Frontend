@@ -112,33 +112,31 @@
                 }
                 content += "</tr>";
             }
-            content += "</table>";
+            content += "</table><br><br>";
 
-            document.getElementById('nav-home').innerHTML = content;
-        })
-        .catch(error => {
-            showErrorModal(error.response);
-            console.log(error);
-        });
+            axios.get("https://paysystem.onrender.com/home/get", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            .then(response => {
 
-        axios.get("https://paysystem.onrender.com/home/get", {
-            headers: { Authorization: `Bearer ${token}` }
-        })
-        .then(response => {
+                var content = '<br><table class="table table-striped">';
+                content += '<thead><tr><th scope="col">钱包地址</th><th scope="col">今日收入</th><th scope="col">今日支出</th></tr></thead>';
+                for(i = 0; i < response.data.length; i++)
+                {
+                    content += "<tr>";
+                    content += "<td>"+response.data[i]['walletAddress']+"</td>";
+                    content += "<td>"+response.data[i]['today_in']+"</td>";
+                    content += "<td>"+response.data[i]['today_out']+"</td>";
+                    content += "</tr>";
+                }
+                content += "</table>";
 
-            var content = '<br><table class="table table-striped">';
-            content += '<thead><tr><th scope="col">钱包地址</th><th scope="col">今日收入</th><th scope="col">今日支出</th></tr></thead>';
-            for(i = 0; i < response.data.length; i++)
-            {
-                content += "<tr>";
-                content += "<td>"+response.data[i]['walletAddress']+"</td>";
-                content += "<td>"+response.data[i]['today_in']+"</td>";
-                content += "<td>"+response.data[i]['today_out']+"</td>";
-                content += "</tr>";
-            }
-            content += "</table>";
-
-            document.getElementById('nav-home').innerHTML = content;
+                document.getElementById('nav-home').innerHTML = content;
+            })
+            .catch(error => {
+                showErrorModal(error.response);
+                console.log(error);
+            });
         })
         .catch(error => {
             showErrorModal(error.response);
