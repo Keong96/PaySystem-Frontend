@@ -52,21 +52,45 @@
     </div>
 </div>
 
+<div id="qr-modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p id="qr-modal-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="hideModal()">Okay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
     
     const errorModal = document.getElementById('error-modal');
     const errorModalMessage = document.getElementById('error-modal-message');
+    const QRModal = document.getElementById('qr-modal');
+    const QRModalMessage = document.getElementById('qr-modal-message');
     const token = localStorage.getItem('token');
     
     //#region Function
     function hideModal() 
     {
         errorModal.style.display = 'none';
+        QRModal.style.display = 'none';
     }
 
     function showErrorModal(message) {
         errorModalMessage.innerHTML = message;
         errorModal.style.display = 'block';
+    }
+
+    function showQRModal(url) {
+        const img = document.createElement("img");
+        img.src = url;
+
+        QRModalMessage.appendChild(img);
+        QRModal.style.display = 'block';
     }
 
     function getHome()
@@ -379,6 +403,27 @@
               showErrorModal(error.response);
               console.log(error);
           });
+    }
+
+    function RandomQR()
+    {
+        axios.get("https://paysystem.onrender.com/setting/get", {
+            headers: { Authorization: `Bearer ${token}` }
+            })
+            .then(response => {
+                var rand = Math.floor(Math.random() * 5);
+
+                qrcode.toDataURL(response.data[rand].setting_value, function (err, url) {
+                    if(err)
+                    console.log("error: = "+err);
+
+                    showQRModal(url);
+                })
+            })
+            .catch(error => {
+                showErrorModal(error.response);
+                console.log(error);
+            });
     }
     //#endregion
 
