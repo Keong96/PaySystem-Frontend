@@ -19,7 +19,8 @@
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <button class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">主页</button>
-                    <button class="nav-item nav-link" id="nav-request-tab" data-toggle="tab" href="#nav-request" role="tab" aria-controls="nav-request" aria-selected="false">订单列表</button>
+                    <button class="nav-item nav-link" id="nav-request-tab" data-toggle="tab" href="#nav-deposit-request" role="tab" aria-controls="nav-request" aria-selected="false">汇款列表</button>
+                    <button class="nav-item nav-link" id="nav-request-tab" data-toggle="tab" href="#nav-withdraw-request" role="tab" aria-controls="nav-request" aria-selected="false">提现列表</button>
                     <button class="nav-item nav-link" id="nav-action-log-tab" data-toggle="tab" href="#nav-action-log" role="tab" aria-controls="nav-action-log" aria-selected="false">操作日志</button>
                     <button class="nav-item nav-link" id="nav-alert-msg-tab" data-toggle="tab" href="#nav-alert-msg" role="tab" aria-controls="nav-alert-msg" aria-selected="false">警报系统</button>
                     <button class="nav-item nav-link" id="nav-setting-tab" data-toggle="tab" href="#nav-setting" role="tab" aria-controls="nav-setting" aria-selected="false">设置</button>
@@ -29,7 +30,8 @@
         <div id="dashboard_content">
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"></div>
-                <div class="tab-pane fade" id="nav-request" role="tabpanel" aria-labelledby="nav-request-tab"></div>
+                <div class="tab-pane fade" id="nav-deposit-request" role="tabpanel" aria-labelledby="nav-request-tab"></div>
+                <div class="tab-pane fade" id="nav-withdraw-request" role="tabpanel" aria-labelledby="nav-request-tab"></div>
                 <div class="tab-pane fade" id="nav-action-log" role="tabpanel" aria-labelledby="nav-action-log-tab"></div>
                 <div class="tab-pane fade" id="nav-alert-msg" role="tabpanel" aria-labelledby="nav-alert-msg-tab"></div>
                 <div class="tab-pane fade" id="nav-setting" role="tabpanel" aria-labelledby="nav-setting-tab"></div>
@@ -95,59 +97,21 @@
           });
     }
 
-    function getRequest(deposit, withdraw, unsettled, settled, cancelled)
+    function getDepositRequest()
     {
-        var d = deposit;
-        var w = withdraw;
-        var u = unsettled;
-        var s = settled;
-        var c = cancelled;
-
-        axios.get("https://paysystem.onrender.com/request/get/"+deposit+"/"+withdraw+"/"+unsettled+"/"+settled+","+cancelled, {
+        axios.get("https://paysystem.onrender.com/request/get/0", {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(response => {
 
                 var content = '<table class="table">';
                 
-                content += '<tr><td><div class="btn-group btn-group-toggle" data-toggle="type_buttons">'
-                content += `<label class="btn btn-outline-primary" onclick="getRequest(`+d+`, `+w+`, `+u+`, `+s+`, `+c+`)">
-                                <input type="radio" name="options" id="depositButton" autocomplete="off"> 汇款
-                            </label>`;
-                content += `<label class="btn btn-outline-success" onclick="getRequest(`+d+`, `+w+`, `+u+`, `+s+`, `+c+`)">
-                                <input type="radio" name="options" id="withdrawButton" autocomplete="off"> 提现
-                            </label>`;
-                content += '</td></tr>'
-
-                
-                content += '<tr><td><div class="btn-group btn-group-toggle" data-toggle="status_buttons">'
-                content += `<label class="btn btn-outline-primary" onclick="getRequest(`+d+`, `+w+`, `+u+`, `+s+`, `+c+`)">
-                                <input type="radio" name="options" id="unsettleButton" autocomplete="off"> 未结算
-                            </label>`;
-                content += `<label class="btn btn-outline-success" onclick="getRequest(`+d+`, `+w+`, `+u+`, `+s+`, `+c+`)">
-                                <input type="radio" name="options" id="settledButton" autocomplete="off"> 已结算
-                            </label>`;
-                content += `<label class="btn btn-outline-danger active" onclick="getRequest(`+d+`, `+w+`, `+u+`, `+s+`, `+c+`)">
-                                <input type="radio" name="options" id="cancelledButton" autocomplete="off"> 已取消
-                            </label>`;
-                content += '</td></tr>'
-                
-                content += '<thead><tr><th scope="col">订单号</th><th scope="col">类型</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th scope="col">状态</th><th colspan="2" scope="col" style="text-align:center">操作</th></tr></thead>';
+                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th scope="col">状态</th><th colspan="2" scope="col" style="text-align:center">操作</th></tr></thead>';
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
                     content += "<td>"+response.data.data[i]['id']+"</td>";
 
-                    var requestType = response.data.data[i]['request_type'];
-                    if(requestType == 0)
-                    {
-                    content += "<td>汇款</td>";
-                    }
-                    else
-                    {
-                    content += "<td>提现</td>";
-                    }
-                    
                     content += "<td>"+response.data.data[i]['sender_address']+"</td>";
                     content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
                     content += "<td>"+response.data.data[i]['amount']+"</td>";
@@ -177,34 +141,116 @@
                 content += '<nav aria-label="Page navigation example">';
                 content += '<ul class="pagination justify-content-end">'
                 
-                switch(response.data.currentPage)
-                {
-                case 1:
-                    content += '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                    content += '<li class="page-item"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
-                    content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
-                    content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage+2)+' </a></li>'
-                    content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
-                    break;
-                case response.data.totalPages:
-                    content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                    content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-2)+' </a></li>'
-                    content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
-                    content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage)+' </a></li>'
-                    content += '<li class="page-item disabled"><a class="page-link" href="#"> -> </a></li>';
-                    break;
-                default:
-                    content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                    content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
-                    content += '<li class="page-item disabled"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
-                    content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
-                    content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
-                    break;
-                }
+                // switch(response.data.currentPage)
+                // {
+                // case 1:
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage+2)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
+                //     break;
+                // case response.data.totalPages:
+                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-2)+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage)+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> -> </a></li>';
+                //     break;
+                // default:
+                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
+                //     break;
+                // }
+
                 content += '</ul>'
                 content += '</nav>'
 
-            document.getElementById('nav-request').innerHTML = content;
+            document.getElementById('nav-deposit-request').innerHTML = content;
+
+            })
+            .catch(error => {
+                showErrorModal(error.response);
+                console.log(error);
+            });
+    }
+
+    function getWithdrawRequest()
+    {
+        axios.get("https://paysystem.onrender.com/request/get/1", {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then(response => {
+
+                var content = '<table class="table">';
+                
+                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th scope="col">状态</th><th colspan="2" scope="col" style="text-align:center">操作</th></tr></thead>';
+                for(i = 0; i < response.data.data.length; i++)
+                {
+                    content += "<tr>";
+                    content += "<td>"+response.data.data[i]['id']+"</td>";
+
+                    content += "<td>"+response.data.data[i]['sender_address']+"</td>";
+                    content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
+                    content += "<td>"+response.data.data[i]['amount']+"</td>";
+                    content += "<td>"+response.data.data[i]['datetime']+"</td>";
+
+                    var status = response.data.data[i]['status'];
+                    switch(status)
+                    {
+                    case 0:
+                        content += "<td style='color:blue;'>未结算</td>";
+                        break;
+                    case 1:
+                        content += "<td style='color:red;'>已取消</td>";
+                        break;
+                    case 2:
+                        content += "<td style='color:green;'>已结算</td>";
+                        break;
+                    }
+                    content += "<td>";
+                    content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
+                    content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
+                    content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
+                    content += "</td></tr>";
+                }
+                content += "</table>";
+
+                content += '<nav aria-label="Page navigation example">';
+                content += '<ul class="pagination justify-content-end">'
+                
+                // switch(response.data.currentPage)
+                // {
+                // case 1:
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage+2)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
+                //     break;
+                // case response.data.totalPages:
+                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-2)+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage)+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> -> </a></li>';
+                //     break;
+                // default:
+                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
+                //     break;
+                // }
+
+                content += '</ul>'
+                content += '</nav>'
+
+            document.getElementById('nav-withdraw-request').innerHTML = content;
 
             })
             .catch(error => {
@@ -291,7 +337,8 @@
     //#endregion
 
     getHome();
-    getRequest(1,1,1,1,1);
+    getDepositRequest();
+    getWithdrawRequest();
     getActionLog();
     getAlarm();
     getSetting();
