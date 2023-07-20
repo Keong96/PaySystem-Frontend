@@ -95,9 +95,15 @@
           });
     }
 
-    function getRequest(type, status)
+    function getRequest(deposit, withdraw, unsettled, settled, cancelled)
     {
-        axios.get("https://paysystem.onrender.com/request/get/"+type+"/"+status, {
+        var d = deposit;
+        var w = withdraw;
+        var u = unsettled;
+        var s = settled;
+        var c = cancelled;
+
+        axios.get("https://paysystem.onrender.com/request/get/"+deposit+"/"+withdraw+"/"+unsettled+"/"+settled+","+cancelled, {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(response => {
@@ -105,23 +111,23 @@
                 var content = '<table class="table">';
                 
                 content += '<tr><td><div class="btn-group btn-group-toggle" data-toggle="type_buttons">'
-                content += `<label class="btn btn-outline-primary" onclick="getRequest(`+type+`, 0)">
+                content += `<label class="btn btn-outline-primary" onclick="getRequest(`+d+`, `+w+`, `+u+`, `+s+`, `+c+`)">
                                 <input type="radio" name="options" id="depositButton" autocomplete="off"> 汇款
                             </label>`;
-                content += `<label class="btn btn-outline-success" onclick="getRequest(`+type+`, 1)">
+                content += `<label class="btn btn-outline-success" onclick="getRequest(`+d+`, `+w+`, `+u+`, `+s+`, `+c+`)">
                                 <input type="radio" name="options" id="withdrawButton" autocomplete="off"> 提现
                             </label>`;
                 content += '</td></tr>'
 
                 
                 content += '<tr><td><div class="btn-group btn-group-toggle" data-toggle="status_buttons">'
-                content += `<label class="btn btn-outline-primary" onclick="getRequest(`+type+`, 0)">
-                                <input type="radio" name="options" id="unsettledButton" autocomplete="off"> 未结算
+                content += `<label class="btn btn-outline-primary" onclick="getRequest(`+d+`, `+w+`, `+u+`, `+s+`, `+c+`)">
+                                <input type="radio" name="options" id="unsettleButton" autocomplete="off"> 未结算
                             </label>`;
-                content += `<label class="btn btn-outline-success" onclick="getRequest(`+type+`, 1)">
+                content += `<label class="btn btn-outline-success" onclick="getRequest(`+d+`, `+w+`, `+u+`, `+s+`, `+c+`)">
                                 <input type="radio" name="options" id="settledButton" autocomplete="off"> 已结算
                             </label>`;
-                content += `<label class="btn btn-outline-danger active" onclick="getRequest(`+type+`, 2)">
+                content += `<label class="btn btn-outline-danger active" onclick="getRequest(`+d+`, `+w+`, `+u+`, `+s+`, `+c+`)">
                                 <input type="radio" name="options" id="cancelledButton" autocomplete="off"> 已取消
                             </label>`;
                 content += '</td></tr>'
@@ -285,7 +291,7 @@
     //#endregion
 
     getHome();
-    getRequest();
+    getRequest(1,1,1,1,1);
     getActionLog();
     getAlarm();
     getSetting();
