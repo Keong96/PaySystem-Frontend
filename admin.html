@@ -165,7 +165,7 @@
             var today = new Date();
             var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
             
-            content += "<span></span><br><br>"
+            content += "<br>"
 
             axios.get("https://paysystem.onrender.com/home/get", {
                 headers: { Authorization: `Bearer ${token}` }
