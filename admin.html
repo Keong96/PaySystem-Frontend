@@ -413,7 +413,7 @@
             var content = '<br><form><div class="form-group row">';
             content += '<label class="col-sm-2 col-form-label">收款钱包地址</label><div class="col-sm-10">'
             
-            for(var i = 0; i < response.data.walletAddress.length; i++)
+            for(var i = 0; i < response.data.length; i++)
             {
                 content += '<input type="text" class="form-control" value="'+response.data.wallet_address[i]+'" id="wallet_address_"'+(i+1)+'>'
             }
