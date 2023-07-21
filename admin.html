@@ -73,13 +73,28 @@
     const QRModalMessage = document.getElementById('qr-modal-message');
     const token = localStorage.getItem('token');
 
-    if (token)
+    if (!token)
     {
-        window.location.href = 'admin.html';
+        window.stop();
+        window.location.href = 'login.html';
     }
     else
     {
-        window.location.href = 'login.html';
+        if(token.verified == 0)
+        {
+        window.stop();
+        window.location.href = 'verification.html';
+        }
+        else
+        {
+        var decoded_token = jwt_decode(token);
+        if (decoded_token.exp < Math.floor(Date.now()/1000))
+        {
+            window.stop();
+            localStorage.removeItem("token");
+            window.location.href = 'login.html';
+        }
+        }
     }
 
     //#region Function
