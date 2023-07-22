@@ -16,6 +16,7 @@
 <body>
     <div class="container mt-5">
         <div id="dashboard_header">
+            <span id="timer"></span>;
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <button class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">主页</button>
@@ -82,18 +83,18 @@
     {
         if(token.verified == 0)
         {
-        window.stop();
-        window.location.href = 'verification.html';
+            window.stop();
+            window.location.href = 'verification.html';
         }
         else
         {
-        var decoded_token = jwt_decode(token);
-        if (decoded_token.exp < Math.floor(Date.now()/1000))
-        {
-            window.stop();
-            localStorage.removeItem("token");
-            window.location.href = 'login.html';
-        }
+            var decoded_token = jwt_decode(token);
+            if (decoded_token.exp < Math.floor(Date.now()/1000))
+            {
+                window.stop();
+                localStorage.removeItem("token");
+                window.location.href = 'login.html';
+            }
         }
     }
 
@@ -160,11 +161,7 @@
                 }
                 content += "</tr>";
             }
-            content += "</table><br><br>";
-
-            var today = new Date();
-            var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
-            
+            content += "</table>";
             content += "<br>"
 
             axios.get("https://paysystem.onrender.com/home/get", {
@@ -454,6 +451,17 @@
                 console.log(error);
             });
     }
+
+    function Timer()
+    {
+        const currentTime = new Date();
+        const hours = currentTime.getHours();
+        const minutes = currentTime.getMinutes();
+        const seconds = currentTime.getSeconds();
+
+        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        document.getElementById("timer").innerHTML = formattedTime;
+    }
     //#endregion
 
     getHome();
@@ -462,6 +470,7 @@
     getActionLog();
     getAlarm();
     getSetting();
+    setInterval(Timer, 1000);
 
 </script>
 </html>
