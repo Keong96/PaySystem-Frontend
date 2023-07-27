@@ -98,11 +98,3 @@ body {
 	font-family: zh-font;
 	src: url(AaWuHunTi-2.ttf);
  }
-
- .nav-tabs {
-	display: flex;
-  }
-  
-  .tab-pane {
-	flex-grow: 1;
-  }
