@@ -14,7 +14,7 @@
 
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container">
         <div id="dashboard_header">
             <nav>
                 <span id="timer"></span>
@@ -22,9 +22,9 @@
                 <span id="username"></span>
                 <br><br>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">主页</button>
-                    <button class="nav-item nav-link" id="nav-request-tab" data-toggle="tab" href="#nav-deposit-request" role="tab" aria-controls="nav-request" aria-selected="false">汇款列表</button>
+                    <button class="nav-item nav-link active" id="nav-request-tab" data-toggle="tab" href="#nav-deposit-request" role="tab" aria-controls="nav-request" aria-selected="false">汇款列表</button>
                     <button class="nav-item nav-link" id="nav-request-tab" data-toggle="tab" href="#nav-withdraw-request" role="tab" aria-controls="nav-request" aria-selected="false">提现列表</button>
+                    <button class="nav-item nav-link" id="nav-change-log-tab" data-toggle="tab" href="#nav-change-log" role="tab" aria-controls="nav-change-log" aria-selected="false">账变记录</button>
                     <button class="nav-item nav-link" id="nav-action-log-tab" data-toggle="tab" href="#nav-action-log" role="tab" aria-controls="nav-action-log" aria-selected="false">操作日志</button>
                     <button class="nav-item nav-link" id="nav-alert-msg-tab" data-toggle="tab" href="#nav-alert-msg" role="tab" aria-controls="nav-alert-msg" aria-selected="false">警报系统</button>
                     <button class="nav-item nav-link" id="nav-setting-tab" data-toggle="tab" href="#nav-setting" role="tab" aria-controls="nav-setting" aria-selected="false">设置</button>
@@ -33,9 +33,9 @@
         </div>
         <div id="dashboard_content">
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"></div>
-                <div class="tab-pane fade" id="nav-deposit-request" role="tabpanel" aria-labelledby="nav-request-tab"></div>
-                <div class="tab-pane fade" id="nav-withdraw-request" role="tabpanel" aria-labelledby="nav-request-tab"></div>
+                <div class="tab-pane fade" id="nav-deposit-request" role="tabpanel" aria-labelledby="nav-deposit-tab"></div>
+                <div class="tab-pane fade" id="nav-withdraw-request" role="tabpanel" aria-labelledby="nav-withdraw-tab"></div>
+                <div class="tab-pane fade" id="nav-change-log" role="tabpanel" aria-labelledby="nav-change-log-tab"></div>
                 <div class="tab-pane fade" id="nav-action-log" role="tabpanel" aria-labelledby="nav-action-log-tab"></div>
                 <div class="tab-pane fade" id="nav-alert-msg" role="tabpanel" aria-labelledby="nav-alert-msg-tab"></div>
                 <div class="tab-pane fade" id="nav-setting" role="tabpanel" aria-labelledby="nav-setting-tab"></div>
@@ -134,82 +134,6 @@
 
         QRModalMessage.appendChild(img);
         QRModal.style.display = 'block';
-    }
-
-    function getHome()
-    {
-        axios.get("https://paysystem.onrender.com/request/latest", {
-            headers: { Authorization: `Bearer ${token}` }
-        })
-        .then(response => {
-
-            var content = '<br><table class="table table-striped">';
-            content += '<thead><tr><th scope="col">订单号</th><th scope="col">类型</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th scope="col">状态</th></tr></thead>';
-            for(i = 0; i < response.data.length; i++)
-            {
-                content += "<tr>";
-                content += "<td>"+response.data[i]['id']+"</td>";
-                
-                if(response.data[i]['request_type'] == 0)
-                {
-                    content += "<td style='color:green'>汇款</td>";
-                }
-                else
-                {
-                    content += "<td style='color:red'>提现</td>";
-                }
-
-                content += "<td>"+response.data[i]['sender_address']+"</td>";
-                content += "<td>"+response.data[i]['receiver_address']+"</td>";
-                content += "<td>"+response.data[i]['amount']+"</td>";
-                content += "<td>"+response.data[i]['datetime']+"</td>";
-
-                var status = response.data[i]['status'];
-                switch(status)
-                {
-                case 0:
-                    content += "<td style='color:blue;'>未结算</td>";
-                    break;
-                case 1:
-                    content += "<td style='color:red;'>已取消</td>";
-                    break;
-                case 2:
-                    content += "<td style='color:green;'>已结算</td>";
-                    break;
-                }
-                content += "</tr>";
-            }
-            content += "</table>";
-            content += "<br>"
-
-            axios.get("https://paysystem.onrender.com/home/get", {
-                headers: { Authorization: `Bearer ${token}` }
-            })
-            .then(response2 => {
-
-                content += '<br><table class="table table-striped">';
-                content += '<thead><tr><th scope="col">钱包地址</th><th scope="col">今日收入</th><th scope="col">今日支出</th></tr></thead>';
-                for(i = 0; i < response2.data.length; i++)
-                {
-                    content += "<tr>";
-                    content += "<td>"+response2.data[i].wallet_address+"</td>";
-                    content += "<td>"+response2.data[i].total_in+"</td>";
-                    content += "<td>"+response2.data[i].total_out+"</td>";
-                    content += "</tr>";
-                }
-                content += "</table>";
-
-                document.getElementById('nav-home').innerHTML = content;
-            })
-            .catch(error => {
-                showErrorModal(error.response);
-                console.log(error);
-            });
-        })
-        .catch(error => {
-            showErrorModal(error.response);
-            console.log(error);
-        });
     }
 
     function getDepositRequest()
@@ -373,6 +297,81 @@
             });
     }
 
+    function getChangeLog()
+    {
+        axios.get("https://paysystem.onrender.com/changelog/get/", {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then(response => {
+
+                var content = '<br><table class="table">';
+                
+                content += '<thead><tr><th scope="col">#</th><th scope="col">订单号</th><th scope="col">钱包地址</th><th scope="col">数额</th><th scope="col">时间</th></tr></thead>';
+                for(i = 0; i < response.data.data.length; i++)
+                {
+                    content += "<tr>";
+                    content += "<td>"+(i+1)+"</td>";
+                    content += "<td>"+response.data.data[i]['id']+"</td>";
+
+                    var request_type = response.data.data[i]['request_type'];
+
+                    switch(request_type)
+                    {
+                    case 0:
+                        content += "<td>"+response.data.data[i]['sender_address']+"</td>";
+                        content += "<td style='color:green;'> + "+response.data.data[i]['amount']+"</td>";
+                        break;
+                    case 1:
+                        content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
+                        content += "<td style='color:red;'> - "+response.data.data[i]['amount']+"</td>";
+                        break;
+
+                    content += "<td>";
+                    content += "<td>"+response.data.data[i]['datetime']+"</td>";
+                    content += "</td></tr>";
+                }
+                content += "</table>";
+
+                content += '<nav aria-label="Page navigation example">';
+                content += '<ul class="pagination justify-content-end">'
+                
+                // switch(response.data.currentPage)
+                // {
+                // case 1:
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage+2)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
+                //     break;
+                // case response.data.totalPages:
+                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-2)+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage)+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> -> </a></li>';
+                //     break;
+                // default:
+                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
+                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
+                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
+                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
+                //     break;
+                // }
+
+                content += '</ul>'
+                content += '</nav>'
+
+            document.getElementById('nav-change-log').innerHTML = content;
+
+            })
+            .catch(error => {
+                showErrorModal(error.response);
+                console.log(error);
+            });
+    }
+    
     function getActionLog()
     {
         //action_log
@@ -473,16 +472,20 @@
     function Timer()
     {
         const currentTime = new Date();
+
+        const day = currentTime.getDate();
+        const month = currentTime.getMonth() + 1;
+        const year = currentTime.getFullYear();
+
         const hours = currentTime.getHours();
         const minutes = currentTime.getMinutes();
         const seconds = currentTime.getSeconds();
 
-        const formattedTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-        document.getElementById("timer").innerHTML = formattedTime;
+        const formattedTime = `${year}年${month}月${day}日, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        document.getElementById("timer").innerHTML = "当前时间 ："+formattedTime;
     }
     //#endregion
 
-    getHome();
     getDepositRequest();
     getWithdrawRequest();
     getActionLog();
