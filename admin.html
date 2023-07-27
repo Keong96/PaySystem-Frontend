@@ -14,21 +14,23 @@
 
 </head>
 <body>
-    <div id="dashboard_header">
-        <nav>
-            <span id="timer"></span>
-            <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <button class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">主页</button>
-                <button class="nav-item nav-link" id="nav-request-tab" data-toggle="tab" href="#nav-deposit-request" role="tab" aria-controls="nav-request" aria-selected="false">汇款列表</button>
-                <button class="nav-item nav-link" id="nav-request-tab" data-toggle="tab" href="#nav-withdraw-request" role="tab" aria-controls="nav-request" aria-selected="false">提现列表</button>
-                <button class="nav-item nav-link" id="nav-action-log-tab" data-toggle="tab" href="#nav-action-log" role="tab" aria-controls="nav-action-log" aria-selected="false">操作日志</button>
-                <button class="nav-item nav-link" id="nav-alert-msg-tab" data-toggle="tab" href="#nav-alert-msg" role="tab" aria-controls="nav-alert-msg" aria-selected="false">警报系统</button>
-                <button class="nav-item nav-link" id="nav-setting-tab" data-toggle="tab" href="#nav-setting" role="tab" aria-controls="nav-setting" aria-selected="false">设置</button>
-            </div>
-        </nav>
-    </div>
-
     <div class="container mt-5">
+        <div id="dashboard_header">
+            <nav>
+                <span id="timer"></span>
+                <br><br>
+                <span id="username"></span>
+                <br><br>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">主页</button>
+                    <button class="nav-item nav-link" id="nav-request-tab" data-toggle="tab" href="#nav-deposit-request" role="tab" aria-controls="nav-request" aria-selected="false">汇款列表</button>
+                    <button class="nav-item nav-link" id="nav-request-tab" data-toggle="tab" href="#nav-withdraw-request" role="tab" aria-controls="nav-request" aria-selected="false">提现列表</button>
+                    <button class="nav-item nav-link" id="nav-action-log-tab" data-toggle="tab" href="#nav-action-log" role="tab" aria-controls="nav-action-log" aria-selected="false">操作日志</button>
+                    <button class="nav-item nav-link" id="nav-alert-msg-tab" data-toggle="tab" href="#nav-alert-msg" role="tab" aria-controls="nav-alert-msg" aria-selected="false">警报系统</button>
+                    <button class="nav-item nav-link" id="nav-setting-tab" data-toggle="tab" href="#nav-setting" role="tab" aria-controls="nav-setting" aria-selected="false">设置</button>
+                </div>
+            </nav>
+        </div>
         <div id="dashboard_content">
             <div class="tab-content" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"></div>
@@ -69,16 +71,6 @@
 </div>
 
 <style>
-    #dashboard_header {
-        position: absolute;
-        top: 25%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 300px;
-        border-radius: 5px;
-        padding: 20px;
-    }
-
     #timer {
        font-size: 18px; 
     }
@@ -118,6 +110,9 @@
                 localStorage.removeItem("token");
                 window.location.href = 'login.html';
             }
+            
+            document.getElementById("username").innerHTML = decoded_token.username;
+            
         }
     }
 
