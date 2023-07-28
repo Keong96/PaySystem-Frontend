@@ -305,7 +305,7 @@
             .then(response => {
 
                 var content = '<br><table class="table">';
-                content += '<thead><tr><th scope="col">#</th><th scope="col">订单号</th><th scope="col">钱包地址</th><th scope="col">UID</th><th scope="col">数额</th><th scope="col">时间</th></tr></thead>';
+                content += '<thead><tr><th scope="col">#</th><th scope="col">订单号</th><th scope="col">钱包地址</th><th scope="col">UID</th><th scope="col">更变前数额</th><th scope="col">数额</th><th scope="col">更变后数额</th><th scope="col">时间</th></tr></thead>';
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
@@ -314,7 +314,9 @@
                     content += "<td>"+response.data.data[i]['address']+"</td>";
                     content += "<td>"+response.data.data[i]['uid']+"</td>";
 
-                    switch(request_type)
+                    content += "<td style='color:green;'> + "+response.data.data[i]['before']+"</td>";
+
+                    switch(response.data.data[i]['request_type'])
                     {
                     case 0:
                         content += "<td style='color:green;'> + "+response.data.data[i]['amount']+"</td>";
@@ -323,8 +325,9 @@
                         content += "<td style='color:red;'> - "+response.data.data[i]['amount']+"</td>";
                         break;
                     }
-                    
-                    content += "<td>"+response.data.data[i]['user_id']+"</td>";
+
+                    content += "<td style='color:green;'> + "+response.data.data[i]['after']+"</td>";
+                    content += "<td>"+response.data.data[i]['uid']+"</td>";
                     content += "<td>"+response.data.data[i]['datetime']+"</td>";
                     content += "</td></tr>";
                 }
