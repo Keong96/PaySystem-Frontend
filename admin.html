@@ -145,7 +145,7 @@
 
                 var content = '<br><table class="table">';
                 
-                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th scope="col">状态</th><th colspan="2" scope="col" style="text-align:center">操作</th></tr></thead>';
+                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th colspan="2" scope="col" style="text-align:center">操作</th></tr></thead>';
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
@@ -155,19 +155,19 @@
                     content += "<td>"+response.data.data[i]['amount']+"</td>";
                     content += "<td>"+response.data.data[i]['datetime']+"</td>";
 
-                    var status = response.data.data[i]['status'];
-                    switch(status)
-                    {
-                    case 0:
-                        content += "<td style='color:blue;'>未结算</td>";
-                        break;
-                    case 1:
-                        content += "<td style='color:red;'>已取消</td>";
-                        break;
-                    case 2:
-                        content += "<td style='color:green;'>已结算</td>";
-                        break;
-                    }
+                    // var status = response.data.data[i]['status'];
+                    // switch(status)
+                    // {
+                    // case 0:
+                    //     content += "<td style='color:blue;'>未结算</td>";
+                    //     break;
+                    // case 1:
+                    //     content += "<td style='color:red;'>已取消</td>";
+                    //     break;
+                    // case 2:
+                    //     content += "<td style='color:green;'>已结算</td>";
+                    //     break;
+                    // }
                     content += "<td>";
                     content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
                     content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
@@ -225,7 +225,7 @@
 
                 var content = '<br><table class="table">';
                 
-                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th scope="col">状态</th><th colspan="2" scope="col" style="text-align:center">操作</th></tr></thead>';
+                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th colspan="2" scope="col" style="text-align:center">操作</th></tr></thead>';
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
@@ -236,19 +236,19 @@
                     content += "<td>"+response.data.data[i]['amount']+"</td>";
                     content += "<td>"+response.data.data[i]['datetime']+"</td>";
 
-                    var status = response.data.data[i]['status'];
-                    switch(status)
-                    {
-                    case 0:
-                        content += "<td style='color:blue;'>未结算</td>";
-                        break;
-                    case 1:
-                        content += "<td style='color:red;'>已取消</td>";
-                        break;
-                    case 2:
-                        content += "<td style='color:green;'>已结算</td>";
-                        break;
-                    }
+                    // var status = response.data.data[i]['status'];
+                    // switch(status)
+                    // {
+                    // case 0:
+                    //     content += "<td style='color:blue;'>未结算</td>";
+                    //     break;
+                    // case 1:
+                    //     content += "<td style='color:red;'>已取消</td>";
+                    //     break;
+                    // case 2:
+                    //     content += "<td style='color:green;'>已结算</td>";
+                    //     break;
+                    // }
                     content += "<td>";
                     content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
                     content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
@@ -299,34 +299,32 @@
 
     function getChangeLog()
     {
-        axios.get("https://paysystem.onrender.com/changelog/get/", {
+        axios.get("https://paysystem.onrender.com/changelog/get", {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(response => {
 
                 var content = '<br><table class="table">';
-                
-                content += '<thead><tr><th scope="col">#</th><th scope="col">订单号</th><th scope="col">钱包地址</th><th scope="col">数额</th><th scope="col">时间</th></tr></thead>';
+                content += '<thead><tr><th scope="col">#</th><th scope="col">订单号</th><th scope="col">钱包地址</th><th scope="col">UID</th><th scope="col">数额</th><th scope="col">时间</th></tr></thead>';
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
                     content += "<td>"+(i+1)+"</td>";
                     content += "<td>"+response.data.data[i]['id']+"</td>";
-
-                    var request_type = response.data.data[i]['request_type'];
+                    content += "<td>"+response.data.data[i]['address']+"</td>";
+                    content += "<td>"+response.data.data[i]['uid']+"</td>";
 
                     switch(request_type)
                     {
                     case 0:
-                        content += "<td>"+response.data.data[i]['sender_address']+"</td>";
                         content += "<td style='color:green;'> + "+response.data.data[i]['amount']+"</td>";
                         break;
                     case 1:
-                        content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
                         content += "<td style='color:red;'> - "+response.data.data[i]['amount']+"</td>";
                         break;
-
-                    content += "<td>";
+                    }
+                    
+                    content += "<td>"+response.data.data[i]['user_id']+"</td>";
                     content += "<td>"+response.data.data[i]['datetime']+"</td>";
                     content += "</td></tr>";
                 }
@@ -425,21 +423,7 @@
           .then(response => {
             
             var content = '<br><form><div class="form-group row">';
-            content += '<label class="col-sm-2 col-form-label">收款钱包地址</label><div class="col-sm-10">'
             
-            for(var i = 0; i < response.data.wallet_address.length; i++)
-            {
-                content += '<input type="text" class="form-control" value="'+response.data.wallet_address[i]+'" id="wallet_address_"'+(i+1)+'>'
-            }
-            
-            content += '</div></div></form>';
-
-            content += '<form><div class="form-group row">';
-            content += '<label class="col-sm-2 col-form-label">自动转账额度</label><div class="col-sm-10">'
-            content += '<input type="text" class="form-control" value="'+response.data.unionPay+'" id="unionPay">'
-            content += '<input type="text" class="form-control" value="'+response.data.auto_approve_amount+'" id="auto_approve_amount">'
-            content += '</div></div></form>';
-
             document.getElementById('nav-setting').innerHTML = content;
           })
           .catch(error => {
@@ -488,9 +472,10 @@
 
     getDepositRequest();
     getWithdrawRequest();
+    getChangeLog();
     getActionLog();
     getAlarm();
-    getSetting();
+    //getSetting();
     setInterval(Timer, 1000);
 
 </script>
