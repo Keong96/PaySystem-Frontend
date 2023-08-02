@@ -12,6 +12,7 @@ body {
 	border-radius: 5px;
 	padding: 20px;
 	border: 1px solid #ddd;
+	min-height: 95%;
   }
 
   .sign-in-container {
@@ -56,6 +57,10 @@ body {
 	background-color: #45a049;
   }
   
+  thead {
+	background-color: #55b2ff7a;
+  }
+
   /* Modal styles */
   .modal {
 	display: none; /* Hidden by default */
@@ -91,6 +96,18 @@ body {
 	color: black;
 	text-decoration: none;
 	cursor: pointer;
+  }
+
+  #paginator {
+	position: fixed;
+	bottom: 20px;
+	right: 20px;
+	display: flex;
+  }
+
+  #paginator button {
+	margin-right: 5px;
+	padding: 5px 10px;
   }
   
   @font-face {

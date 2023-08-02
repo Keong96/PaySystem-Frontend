@@ -33,13 +33,14 @@
         </div>
         <div id="dashboard_content">
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade" id="nav-deposit-request" role="tabpanel" aria-labelledby="nav-deposit-tab"></div>
+                <div class="tab-pane fade active show" id="nav-deposit-request" role="tabpanel" aria-labelledby="nav-deposit-tab"></div>
                 <div class="tab-pane fade" id="nav-withdraw-request" role="tabpanel" aria-labelledby="nav-withdraw-tab"></div>
                 <div class="tab-pane fade" id="nav-change-log" role="tabpanel" aria-labelledby="nav-change-log-tab"></div>
                 <div class="tab-pane fade" id="nav-action-log" role="tabpanel" aria-labelledby="nav-action-log-tab"></div>
                 <div class="tab-pane fade" id="nav-alert-msg" role="tabpanel" aria-labelledby="nav-alert-msg-tab"></div>
                 <div class="tab-pane fade" id="nav-setting" role="tabpanel" aria-labelledby="nav-setting-tab"></div>
             </div>
+            <div id="paginator"></div>
         </div>
     </div>
 </body>
@@ -71,6 +72,10 @@
 </div>
 
 <style>
+    table {
+        text-align: center;
+    }
+
     #timer {
        font-size: 18px; 
     }
@@ -78,7 +83,21 @@
     td {
         white-space: normal !important; 
         word-wrap: break-word;  
+        text-align: center;
     }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(238, 255, 0, 0.363);
+    }
+
+    .input-group {
+      padding: 15px;
+    }
+
+    .input-group input{
+        text-align: center;
+    }
+
 </style>
 
 <script>
@@ -110,9 +129,7 @@
                 localStorage.removeItem("token");
                 window.location.href = 'login.html';
             }
-            
             document.getElementById("username").innerHTML = decoded_token.username;
-            
         }
     }
 
@@ -136,24 +153,44 @@
         QRModal.style.display = 'block';
     }
 
-    function getDepositRequest()
+    function getDepositRequest(page, orderId=null, sender=null, receiver=null, startTime=null, endTime=null, amount=null)
     {
-        axios.get("https://paysystem.onrender.com/request/get/0", {
+        var url = "https://paysystem.onrender.com/request/get?type=0";
+
+        if(orderId)
+            url += "&orderId="+orderId;
+        if(sender)
+            url += "&sender="+sender;
+        if(receiver)
+            url += "&receiver="+receiver;
+        if(amount)
+            url += "&amount="+amount;
+
+        axios.get(url, {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(response => {
-
-                var content = '<br><table class="table">';
                 
-                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th colspan="2" scope="col" style="text-align:center">操作</th></tr></thead>';
+                var content = `<div class="input-group">`;
+                content += `<input type="text" id="deposit_id" class="form-control" placeholder="订单号">`;
+                content += `<input type="text" id="deposit_sender" class="form-control" placeholder="发款地址">`;
+                content += `<input type="text" id="deposit_receiver" class="form-control" placeholder="收款地址">`;
+                content += `<input type="text" id="deposit_time" class="form-control" placeholder="时间">`;
+                content += `<input type="text" id="deposit_amount" class="form-control" placeholder="数额">`;
+                content += `<button class="btn btn-outline-success my-2 my-sm-0" onclick="Search('deposit')">搜索</button>`;
+                content += `</div>`;
+
+                content += '<table class="table table-bordered align-middle table-hover">';
+                
+                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">时间</th><th scope="col">数额 (USDT) </th></thead>';
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
                     content += "<td>"+response.data.data[i]['id']+"</td>";
                     content += "<td>"+response.data.data[i]['sender_address']+"</td>";
                     content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
-                    content += "<td>"+response.data.data[i]['amount']+"</td>";
                     content += "<td>"+response.data.data[i]['datetime']+"</td>";
+                    content += "<td>"+response.data.data[i]['amount']+"</td>";
 
                     // var status = response.data.data[i]['status'];
                     // switch(status)
@@ -168,44 +205,12 @@
                     //     content += "<td style='color:green;'>已结算</td>";
                     //     break;
                     // }
-                    content += "<td>";
-                    content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
-                    content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
-                    content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
-                    content += "</td></tr>";
+                    content += "</tr>";
                 }
+                content += "<tr style='background-color:#b7b7b7'><td colspan='4'><b>总额</b></td><td colspan='1'>"+response.data.total+"</td></tr>";
                 content += "</table>";
 
-                content += '<nav aria-label="Page navigation example">';
-                content += '<ul class="pagination justify-content-end">'
-                
-                // switch(response.data.currentPage)
-                // {
-                // case 1:
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage+2)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
-                //     break;
-                // case response.data.totalPages:
-                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-2)+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage)+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> -> </a></li>';
-                //     break;
-                // default:
-                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
-                //     break;
-                // }
-
-                content += '</ul>'
-                content += '</nav>'
+                SetupPaginator(0, response.data.currentPage, response.data.totalPages, response.data.totalItems);
 
             document.getElementById('nav-deposit-request').innerHTML = content;
 
@@ -216,16 +221,27 @@
             });
     }
 
-    function getWithdrawRequest()
+    function getWithdrawRequest(page, orderId=null, sender=null, receiver=null, startTime=null, endTime=null, amount=null)
     {
-        axios.get("https://paysystem.onrender.com/request/get/1", {
+        var url = "https://paysystem.onrender.com/request/get?type=1";
+
+        if(orderId)
+            url += "&orderId="+orderId;
+        if(sender)
+            url += "&sender="+sender;
+        if(receiver)
+            url += "&receiver="+receiver;
+        if(amount)
+            url += "&amount="+amount;
+
+        axios.get(url, {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(response => {
 
-                var content = '<br><table class="table">';
+                var content = '<br><table class="table table-bordered align-middle table-hover">';
                 
-                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">数额</th><th scope="col">时间</th><th colspan="2" scope="col" style="text-align:center">操作</th></tr></thead>';
+                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">时间</th><th scope="col">数额 (USDT) </th></tr></thead>';
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
@@ -233,8 +249,8 @@
 
                     content += "<td>"+response.data.data[i]['sender_address']+"</td>";
                     content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
-                    content += "<td>"+response.data.data[i]['amount']+"</td>";
                     content += "<td>"+response.data.data[i]['datetime']+"</td>";
+                    content += "<td>"+response.data.data[i]['amount']+"</td>";
 
                     // var status = response.data.data[i]['status'];
                     // switch(status)
@@ -249,44 +265,17 @@
                     //     content += "<td style='color:green;'>已结算</td>";
                     //     break;
                     // }
-                    content += "<td>";
-                    content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
-                    content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
-                    content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
-                    content += "</td></tr>";
+                    // content += "<td>";
+                    // content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
+                    // content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
+                    // content += '<button class="btn btn-outline-secondary" onclick=""><i class="fa fa-gear"></i></button> &nbsp';
+                    // content += "</td></tr>";
+                    content += "</tr>";
                 }
+                content += "<tr style='background-color:#b7b7b7'><td colspan='4'><b>总额</b></td><td colspan='1'>"+response.data.total+"</td></tr>";
                 content += "</table>";
 
-                content += '<nav aria-label="Page navigation example">';
-                content += '<ul class="pagination justify-content-end">'
-                
-                // switch(response.data.currentPage)
-                // {
-                // case 1:
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage+2)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
-                //     break;
-                // case response.data.totalPages:
-                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-2)+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage)+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> -> </a></li>';
-                //     break;
-                // default:
-                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
-                //     break;
-                // }
-
-                content += '</ul>'
-                content += '</nav>'
+                SetupPaginator(1, response.data.currentPage, response.data.totalPages, response.data.totalItems);
 
             document.getElementById('nav-withdraw-request').innerHTML = content;
 
@@ -297,15 +286,15 @@
             });
     }
 
-    function getChangeLog()
+    function getChangeLog(page)
     {
-        axios.get("https://paysystem.onrender.com/changelog/get", {
+        axios.get("https://paysystem.onrender.com/changelog/get/"+page, {
             headers: { Authorization: `Bearer ${token}` }
         })
             .then(response => {
 
-                var content = '<br><table class="table">';
-                content += '<thead><tr><th scope="col">#</th><th scope="col">订单号</th><th scope="col">钱包地址</th><th scope="col">UID</th><th scope="col">更变前数额</th><th scope="col">数额</th><th scope="col">更变后数额</th><th scope="col">时间</th></tr></thead>';
+                var content = '<br><table class="table table-bordered align-middle table-hover">';
+                content += '<thead><tr><th scope="col">#</th><th scope="col">订单号</th><th scope="col">钱包地址</th><th scope="col">游戏ID</th><th scope="col">时间</th><th scope="col">更变前数额</th><th scope="col">数额</th><th scope="col">更变后数额</th></tr></thead>';
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
@@ -314,7 +303,8 @@
                     content += "<td>"+response.data.data[i]['address']+"</td>";
                     content += "<td>"+response.data.data[i]['uid']+"</td>";
 
-                    content += "<td style='color:green;'> + "+response.data.data[i]['before']+"</td>";
+                    content += "<td style>"+response.data.data[i]['before']+"</td>";
+                    content += "<td>"+response.data.data[i]['datetime']+"</td>";
 
                     switch(response.data.data[i]['request_type'])
                     {
@@ -326,43 +316,14 @@
                         break;
                     }
 
-                    content += "<td style='color:green;'> + "+response.data.data[i]['after']+"</td>";
+                    content += "<td>"+response.data.data[i]['after']+"</td>";
                     content += "<td>"+response.data.data[i]['uid']+"</td>";
-                    content += "<td>"+response.data.data[i]['datetime']+"</td>";
+
                     content += "</td></tr>";
                 }
                 content += "</table>";
 
-                content += '<nav aria-label="Page navigation example">';
-                content += '<ul class="pagination justify-content-end">'
-                
-                // switch(response.data.currentPage)
-                // {
-                // case 1:
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage+2)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
-                //     break;
-                // case response.data.totalPages:
-                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-2)+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage)+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> -> </a></li>';
-                //     break;
-                // default:
-                //     content += '<li class="page-item"><a class="page-link" href="#" tabindex="-1"> <- </a></li>';
-                //     content += '<li class="page-item"><a class="page-link" href="#"> '+(response.data.currentPage-1)+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+response.data.currentPage+' </a></li>'
-                //     content += '<li class="page-item disabled"><a class="page-link" href="#"> '+(response.data.currentPage+1)+' </a></li>'
-                //     content += '<li class="page-item"><a class="page-link" href="#"> -> </a></li>';
-                //     break;
-                // }
-
-                content += '</ul>'
-                content += '</nav>'
+                SetupPaginator(2, response.data.currentPage, response.data.totalPages, response.data.totalItems);
 
             document.getElementById('nav-change-log').innerHTML = content;
 
@@ -373,15 +334,15 @@
             });
     }
     
-    function getActionLog()
+    function getActionLog(page)
     {
         //action_log
-        axios.get("https://paysystem.onrender.com/action_log/get", {
+        axios.get("https://paysystem.onrender.com/action_log/get/"+page, {
             headers: { Authorization: `Bearer ${token}` }
           })
           .then(response => {
             
-            var content = '<br><table class="table table-striped">';
+            var content = '<br><table class="table table-bordered align-middle">';
             content += '<thead><tr><th scope="col">ID</th><th scope="col">用户</th><th scope="col">操作内容</th><th scope="col">时间</th></tr></thead>';
             for(i = 0; i < response.data.data.length; i++)
             {
@@ -403,6 +364,9 @@
                     console.log(error);
                 });
             }
+            content += "</table>";
+            
+            SetupPaginator(3, response.data.currentPage, response.data.totalPages, response.data.totalItems);
 
             document.getElementById('nav-action-log').innerHTML = content;
           })
@@ -412,15 +376,15 @@
           });
     }
 
-    function getAlarm()
+    function getAlarm(page)
     {
 
     }
 
-    function getSetting()
+    function getSetting(page)
     {
         //setting
-        axios.get("https://paysystem.onrender.com/setting/get", {
+        axios.get("https://paysystem.onrender.com/setting/get/"+page, {
             headers: { Authorization: `Bearer ${token}` }
           })
           .then(response => {
@@ -471,14 +435,98 @@
         const formattedTime = `${year}年${month}月${day}日, ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         document.getElementById("timer").innerHTML = "当前时间 ："+formattedTime;
     }
+
+    function SetupPaginator(type, currentPage, totalPages, totalItems)
+    {
+        const paginator = document.getElementById('paginator');
+        paginator.innerHTML = '';
+
+        const recordText = document.createElement('span');
+        recordText.innerHTML = totalItems+" 条记录 &nbsp &nbsp";
+        paginator.appendChild(recordText);
+
+        const firstPageButton = document.createElement('button');
+        firstPageButton.classList.add("btn");
+        firstPageButton.classList.add("btn-outline-secondary");
+        firstPageButton.textContent = "首页";
+        if(currentPage == 1)
+        {
+            firstPageButton.classList.add("active");
+            firstPageButton.classList.add("disabled");
+        }
+        paginator.appendChild(firstPageButton);
+
+        for (let i = 1; i <= totalPages; i++)
+        {
+            const button = document.createElement('button');
+            
+            button.classList.add("btn");
+            button.textContent = i;
+
+            if(i == currentPage)
+            {
+                button.classList.add("btn-outline-secondary");
+                button.classList.add("active");
+                button.classList.add("disabled");
+            }
+            else
+            {
+                button.classList.add("btn-outline-secondary");
+            }
+
+            button.addEventListener('click', () => {
+                switch(type)
+                {
+                    case 0: getDepositRequest(i);
+                        break;
+                    case 1: getWithdrawRequest(i);
+                        break;
+                    case 2: getChangeLog(i);
+                        break;
+                    case 3: getActionLog(i);
+                        break;
+                    case 4: getAlarm(i);
+                        break;
+                    case 5: getSetting(i);
+                        break;
+                }
+            });
+
+            paginator.appendChild(button);
+        }
+
+        const lastPageButton = document.createElement('button');
+        lastPageButton.classList.add("btn");
+        lastPageButton.classList.add("btn-outline-secondary");
+        lastPageButton.textContent = "尾页";
+        if(currentPage == totalPages)
+        {
+            lastPageButton.classList.add("active");
+            lastPageButton.classList.add("disabled");
+        }
+        paginator.appendChild(lastPageButton);
+    }
+
+    function Search(type)
+    {
+        var url = "";
+
+        switch(type)
+        {
+            case "deposit":
+                break;
+        }
+
+        
+    }
     //#endregion
 
-    getDepositRequest();
-    getWithdrawRequest();
-    getChangeLog();
-    getActionLog();
-    getAlarm();
-    //getSetting();
+    getDepositRequest(1);
+    getWithdrawRequest(1);
+    // getChangeLog(1);
+    // getActionLog(1);
+    // getAlarm(1);
+    // getSetting(1);
     setInterval(Timer, 1000);
 
 </script>
