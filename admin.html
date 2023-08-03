@@ -244,6 +244,8 @@
     {
         var url = "https://paysystem.onrender.com/request/get?type=1";
 
+        url += "&page="+page;
+
         if(orderId)
             url += "&orderId="+orderId;
         if(sender)
@@ -322,6 +324,8 @@
     function getChangeLog(page, orderId=null, address=null, uid=null, startTime=null, endTime=null, amount=null)
     {
         var url = "https://paysystem.onrender.com/changelog/get/";
+
+        url += "?page="+page;
 
         if(orderId)
             url += "&orderId="+orderId;
@@ -478,8 +482,8 @@
         var exchange_rate = document.getElementById("exchange_rate");
 
         axios.post("https://paysystem.onrender.com/setting/save/", {
-            contract_address : contract_address,
-            exchange_rate : exchange_rate,
+            contract_address : contract_address.value,
+            exchange_rate : exchange_rate.value,
           }, {
             headers: { Authorization: `Bearer ${token}` }
           })
@@ -548,6 +552,48 @@
             firstPageButton.classList.add("active");
             firstPageButton.classList.add("disabled");
         }
+        firstPageButton.addEventListener('click', () => {
+            switch(type)
+            {
+                case 0: 
+                    var orderId = document.getElementById("deposit_id").value;
+                    var sender = document.getElementById("deposit_sender").value;
+                    var receiver = document.getElementById("deposit_receiver").value;
+                    var start_time = document.getElementById("deposit_start_time").value;
+                    var end_time = document.getElementById("deposit_end_time").value;
+                    var amount = document.getElementById("deposit_amount").value;
+
+                    getDepositRequest(1, orderId, sender, receiver, start_time, end_time, amount);
+                    break;
+                case 1:
+                    var orderId = document.getElementById("withdraw_id").value;
+                    var sender = document.getElementById("withdraw_sender").value;
+                    var receiver = document.getElementById("withdraw_receiver").value;
+                    var start_time = document.getElementById("withdraw_start_time").value;
+                    var end_time = document.getElementById("withdraw_end_time").value;
+                    var amount = document.getElementById("withdraw_amount").value;
+
+                    getWithdrawRequest(1, orderId, sender, receiver, start_time, end_time, amount);
+                    break;
+                case 2:
+                    var orderId = document.getElementById("changelog_id").value;
+                    var address = document.getElementById("changelog_address").value;
+                    var uid = document.getElementById("changelog_uid").value;
+                    var start_time = document.getElementById("changelog_start_time").value;
+                    var end_time = document.getElementById("changelog_end_time").value;
+                    var amount = document.getElementById("changelog_amount").value;
+
+                    getChangeLog(1, orderId, address, uid, start_time, end_time, amount);
+                    break;
+                case 3:
+                    getActionLog(1);
+                    break;
+                case 4:
+                    getAlarm(1);
+                    break;
+
+            }
+        });
         paginator.appendChild(firstPageButton);
 
         for (let i = 1; i <= totalPages; i++)
@@ -625,6 +671,48 @@
             lastPageButton.classList.add("active");
             lastPageButton.classList.add("disabled");
         }
+        lastPageButton.addEventListener('click', () => {
+            switch(type)
+            {
+                case 0: 
+                    var orderId = document.getElementById("deposit_id").value;
+                    var sender = document.getElementById("deposit_sender").value;
+                    var receiver = document.getElementById("deposit_receiver").value;
+                    var start_time = document.getElementById("deposit_start_time").value;
+                    var end_time = document.getElementById("deposit_end_time").value;
+                    var amount = document.getElementById("deposit_amount").value;
+
+                    getDepositRequest(totalPages, orderId, sender, receiver, start_time, end_time, amount);
+                    break;
+                case 1:
+                    var orderId = document.getElementById("withdraw_id").value;
+                    var sender = document.getElementById("withdraw_sender").value;
+                    var receiver = document.getElementById("withdraw_receiver").value;
+                    var start_time = document.getElementById("withdraw_start_time").value;
+                    var end_time = document.getElementById("withdraw_end_time").value;
+                    var amount = document.getElementById("withdraw_amount").value;
+
+                    getWithdrawRequest(totalPages, orderId, sender, receiver, start_time, end_time, amount);
+                    break;
+                case 2:
+                    var orderId = document.getElementById("changelog_id").value;
+                    var address = document.getElementById("changelog_address").value;
+                    var uid = document.getElementById("changelog_uid").value;
+                    var start_time = document.getElementById("changelog_start_time").value;
+                    var end_time = document.getElementById("changelog_end_time").value;
+                    var amount = document.getElementById("changelog_amount").value;
+
+                    getChangeLog(totalPages, orderId, address, uid, start_time, end_time, amount);
+                    break;
+                case 3:
+                    getActionLog(totalPages);
+                    break;
+                case 4:
+                    getAlarm(totalPages);
+                    break;
+
+            }
+        });
         paginator.appendChild(lastPageButton);
     }
 
