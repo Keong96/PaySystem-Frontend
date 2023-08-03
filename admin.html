@@ -365,12 +365,11 @@
 
                 content += '<table class="table table-bordered align-middle table-hover">';
 
-                content += '<thead><tr><th scope="col">#</th><th scope="col">订单号</th><th scope="col">钱包地址</th><th scope="col">游戏ID</th><th scope="col">时间</th><th scope="col">更变前数额</th><th scope="col">数额</th><th scope="col">更变后数额</th></tr></thead>';
+                content += '<thead><tr><th scope="col">订单号</th><th scope="col">钱包地址</th><th scope="col">游戏ID</th><th scope="col">时间</th><th scope="col">更变前数额</th><th scope="col">数额</th><th scope="col">更变后数额</th></tr></thead>';
 
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
-                    content += "<td>"+(i+1)+"</td>";
                     content += "<td>"+response.data.data[i]['id']+"</td>";
                     content += "<td>"+response.data.data[i]['address']+"</td>";
                     content += "<td>"+response.data.data[i]['uid']+"</td>";
