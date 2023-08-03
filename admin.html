@@ -165,7 +165,7 @@
         QRModal.style.display = 'block';
     }
 
-    function getDepositRequest(page, orderId=null, sender=null, receiver=null, startTime=null, endTime=null, amount=null)
+    function getDepositRequest(page, orderId=null, sender=null, receiver=null, uid=null, startTime=null, endTime=null, amount=null)
     {
         var url = "https://paysystem.onrender.com/request/get?type=0";
 
@@ -177,12 +177,14 @@
             url += "&sender="+sender;
         if(receiver)
             url += "&receiver="+receiver;
-        if(amount)
-            url += "&amount="+amount;
+        if(uid)
+            url += "&uid="+uid;
         if(startTime)
             url += "&startTime="+startTime;
         if(endTime)
             url += "&endTime="+endTime;
+        if(amount)
+            url += "&amount="+amount;
 
         axios.get(url, {
             headers: { Authorization: `Bearer ${token}` }
@@ -193,6 +195,7 @@
                 content += `<input type="text" id="deposit_id" class="form-control" placeholder="订单号" value="`+(orderId == null ? "" : orderId)+`">`;
                 content += `<input type="text" id="deposit_sender" class="form-control" placeholder="发款地址" value="`+(sender == null ? "" : sender)+`">`;
                 content += `<input type="text" id="deposit_receiver" class="form-control" placeholder="收款地址" value="`+(receiver == null ? "" : receiver)+`">`;
+                content += `<input type="text" id="deposit_uid" class="form-control" placeholder="游戏ID" value="`+(uid == null ? "" : uid)+`">`;
                 content += `<input type="text" id="deposit_start_time" class="form-control" placeholder="开始时间" onfocus="(this.type='date')" onblur="(this.type='text')" value="`+(startTime == null ? "" : startTime)+`">`;
                 content += `<input type="text" id="deposit_end_time" class="form-control" placeholder="结束时间" onfocus="(this.type='date')" onblur="(this.type='text')" value="`+(endTime == null ? "" : endTime)+`">`;
                 content += `<input type="text" id="deposit_amount" class="form-control" placeholder="数额" value="`+(amount == null ? "" : amount)+`">`;
@@ -201,13 +204,14 @@
 
                 content += '<table class="table table-bordered align-middle table-hover">';
                 
-                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">时间</th><th scope="col">数额 (USDT) </th></thead>';
+                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">游戏ID</th><th scope="col">时间</th><th scope="col">数额 (USDT) </th></thead>';
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
                     content += "<td>"+response.data.data[i]['id']+"</td>";
                     content += "<td>"+response.data.data[i]['sender_address']+"</td>";
                     content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
+                    content += "<td>"+response.data.data[i]['uid']+"</td>";
                     content += "<td>"+response.data.data[i]['datetime']+"</td>";
                     content += "<td>"+response.data.data[i]['amount']+"</td>";
 
@@ -226,7 +230,7 @@
                     // }
                     content += "</tr>";
                 }
-                content += "<tr style='background-color:#b7b7b7'><td colspan='4'><b>总额</b></td><td colspan='1'>"+response.data.total+"</td></tr>";
+                content += "<tr style='background-color:#b7b7b7'><td colspan='4'><b>总额</b></td><td colspan='1'><b>"+response.data.total+"</b></td></tr>";
                 content += "</table>";
 
                 SetupPaginator(0, response.data.currentPage, response.data.totalPages, response.data.totalItems);
@@ -240,7 +244,7 @@
             });
     }
 
-    function getWithdrawRequest(page, orderId=null, sender=null, receiver=null, startTime=null, endTime=null, amount=null)
+    function getWithdrawRequest(page, orderId=null, sender=null, receiver=null, uid=null, startTime=null, endTime=null, amount=null)
     {
         var url = "https://paysystem.onrender.com/request/get?type=1";
 
@@ -252,12 +256,14 @@
             url += "&sender="+sender;
         if(receiver)
             url += "&receiver="+receiver;
-        if(amount)
-            url += "&amount="+amount;
+        if(uid)
+            url += "&uid="+uid;
         if(startTime)
             url += "&startTime="+startTime;
         if(endTime)
             url += "&endTime="+endTime;
+        if(amount)
+            url += "&amount="+amount;
 
         axios.get(url, {
             headers: { Authorization: `Bearer ${token}` }
@@ -268,6 +274,7 @@
                 content += `<input type="text" id="withdraw_id" class="form-control" placeholder="订单号" value="`+(orderId == null ? "" : orderId)+`">`;
                 content += `<input type="text" id="withdraw_sender" class="form-control" placeholder="发款地址" value="`+(sender == null ? "" : sender)+`">`;
                 content += `<input type="text" id="withdraw_receiver" class="form-control" placeholder="收款地址" value="`+(receiver == null ? "" : receiver)+`">`;
+                content += `<input type="text" id="withdraw_uid" class="form-control" placeholder="游戏ID" value="`+(uid == null ? "" : uid)+`">`;
                 content += `<input type="text" id="withdraw_start_time" class="form-control" placeholder="开始时间" onfocus="(this.type='date')" onblur="(this.type='text')" value="`+(startTime == null ? "" : startTime)+`">`;
                 content += `<input type="text" id="withdraw_end_time" class="form-control" placeholder="结束时间" onfocus="(this.type='date')" onblur="(this.type='text')" value="`+(endTime == null ? "" : endTime)+`">`;
                 content += `<input type="text" id="withdraw_amount" class="form-control" placeholder="数额" value="`+(amount == null ? "" : amount)+`">`;
@@ -276,7 +283,7 @@
 
                 content += '<table class="table table-bordered align-middle table-hover">';
                 
-                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">时间</th><th scope="col">数额 (USDT) </th></tr></thead>';
+                content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">游戏ID</th><th scope="col">时间</th><th scope="col">数额 (USDT) </th></tr></thead>';
                 for(i = 0; i < response.data.data.length; i++)
                 {
                     content += "<tr>";
@@ -284,6 +291,7 @@
 
                     content += "<td>"+response.data.data[i]['sender_address']+"</td>";
                     content += "<td>"+response.data.data[i]['receiver_address']+"</td>";
+                    content += "<td>"+response.data.data[i]['uid']+"</td>";
                     content += "<td>"+response.data.data[i]['datetime']+"</td>";
                     content += "<td>"+response.data.data[i]['amount']+"</td>";
 
@@ -307,7 +315,7 @@
                     // content += "</td></tr>";
                     content += "</tr>";
                 }
-                content += "<tr style='background-color:#b7b7b7'><td colspan='4'><b>总额</b></td><td colspan='1'>"+response.data.total+"</td></tr>";
+                content += "<tr style='background-color:#b7b7b7'><td colspan='4'><b>总额</b></td><td colspan='1'><b>"+response.data.total+"</b></td></tr>";
                 content += "</table>";
 
                 SetupPaginator(1, response.data.currentPage, response.data.totalPages, response.data.totalItems);
@@ -559,16 +567,18 @@
                     var orderId = document.getElementById("deposit_id").value;
                     var sender = document.getElementById("deposit_sender").value;
                     var receiver = document.getElementById("deposit_receiver").value;
+                    var uid = document.getElementById("deposit_uid").value;
                     var start_time = document.getElementById("deposit_start_time").value;
                     var end_time = document.getElementById("deposit_end_time").value;
                     var amount = document.getElementById("deposit_amount").value;
 
-                    getDepositRequest(1, orderId, sender, receiver, start_time, end_time, amount);
+                    getDepositRequest(1, orderId, sender, receiver, uid, start_time, end_time, amount);
                     break;
                 case 1:
                     var orderId = document.getElementById("withdraw_id").value;
                     var sender = document.getElementById("withdraw_sender").value;
                     var receiver = document.getElementById("withdraw_receiver").value;
+                    var uid = document.getElementById("withdraw_uid").value;
                     var start_time = document.getElementById("withdraw_start_time").value;
                     var end_time = document.getElementById("withdraw_end_time").value;
                     var amount = document.getElementById("withdraw_amount").value;
@@ -725,11 +735,12 @@
                 var orderId = document.getElementById("deposit_id").value;
                 var sender = document.getElementById("deposit_sender").value;
                 var receiver = document.getElementById("deposit_receiver").value;
+                var uid = document.getElementById("deposit_uid").value;
                 var start_time = document.getElementById("deposit_start_time").value;
                 var end_time = document.getElementById("deposit_end_time").value;
                 var amount = document.getElementById("deposit_amount").value;
 
-                getDepositRequest(1, orderId, sender, receiver, start_time, end_time, amount);
+                getDepositRequest(1, orderId, sender, receiver, uid, start_time, end_time, amount);
 
                 break;
             case "withdraw":
@@ -737,21 +748,22 @@
                 var orderId = document.getElementById("withdraw_id").value;
                 var sender = document.getElementById("withdraw_sender").value;
                 var receiver = document.getElementById("withdraw_receiver").value;
+                var uid = document.getElementById("withdraw_uid").value;
                 var start_time = document.getElementById("withdraw_start_time").value;
                 var end_time = document.getElementById("withdraw_end_time").value;
                 var amount = document.getElementById("withdraw_amount").value;
 
-                getWithdrawRequest(1, orderId, sender, receiver, start_time, end_time, amount);
+                getWithdrawRequest(1, orderId, sender, receiver, uid, start_time, end_time, amount);
 
                 break;
             case "changelog":
 
-                var orderId = document.getElementById("withdraw_id").value;
-                var sender = document.getElementById("withdraw_sender").value;
-                var receiver = document.getElementById("withdraw_receiver").value;
-                var start_time = document.getElementById("withdraw_start_time").value;
-                var end_time = document.getElementById("withdraw_end_time").value;
-                var amount = document.getElementById("withdraw_amount").value;
+                var orderId = document.getElementById("changelog_id").value;
+                var sender = document.getElementById("changelog_sender").value;
+                var receiver = document.getElementById("changelog_receiver").value;
+                var start_time = document.getElementById("changelog_start_time").value;
+                var end_time = document.getElementById("changelog_end_time").value;
+                var amount = document.getElementById("changelogamount").value;
 
                 getChangeLog(1, orderId, sender, receiver, start_time, end_time, amount);
 
