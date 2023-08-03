@@ -442,7 +442,7 @@
     function getSetting()
     {
         //setting
-        axios.get("https://paysystem.onrender.com/setting/get/"+page, {
+        axios.get("https://paysystem.onrender.com/setting/get/", {
             headers: { Authorization: `Bearer ${token}` }
           })
           .then(response => {
