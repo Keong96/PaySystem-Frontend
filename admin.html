@@ -478,10 +478,10 @@
         var exchange_rate = document.getElementById("exchange_rate");
 
         axios.post("https://paysystem.onrender.com/setting/save/", {
-            headers: { Authorization: `Bearer ${token}` }
-          }, {
             contract_address : contract_address,
             exchange_rate : exchange_rate,
+          }, {
+            headers: { Authorization: `Bearer ${token}` }
           })
           .then(response => {
             
@@ -672,9 +672,6 @@
                 
                 break;
             case "alarm":
-                
-                break;
-            case "setting":
                 
                 break;
         }
