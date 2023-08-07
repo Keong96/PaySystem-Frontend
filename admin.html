@@ -39,10 +39,25 @@
                 <div class="tab-pane fade" id="nav-alert-msg" role="tabpanel" aria-labelledby="nav-alert-msg-tab"></div>
                 <div class="tab-pane fade" id="nav-setting" role="tabpanel" aria-labelledby="nav-setting-tab"></div>
             </div>
+            <br>
+            <br>
             <div id="paginator"></div>
         </div>
     </div>
 </body>
+
+<div id="modal" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <p id="modal-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="hideModal()">Okay</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div id="error-modal" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog modal-xl" role="document">
@@ -69,6 +84,8 @@
         </div>
     </div>
 </div>
+
+<audio id="alarm" src="./alarm.mp3"></audio>
 
 <style>
     table {
@@ -114,6 +131,8 @@
 
 <script>
 
+    const modal = document.getElementById('modal');
+    const modalMessage = document.getElementById('modal-message');
     const errorModal = document.getElementById('error-modal');
     const errorModalMessage = document.getElementById('error-modal-message');
     const QRModal = document.getElementById('qr-modal');
@@ -150,6 +169,12 @@
     {
         errorModal.style.display = 'none';
         QRModal.style.display = 'none';
+        modal.style.display = 'none';
+    }
+
+    function showModal(message) {
+        modalMessage.innerHTML = message;
+        modal.style.display = 'block';
     }
 
     function showErrorModal(message) {
@@ -202,7 +227,7 @@
                 content += `<button class="btn btn-outline-success my-2 my-sm-0" onclick="Search('deposit')">搜索</button>`;
                 content += `</div>`;
 
-                content += '<table class="table table-bordered align-middle table-hover">';
+                content += '<table class="table table-bordered align-middle table-hover table-sm">';
                 
                 content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">游戏ID</th><th scope="col">时间</th><th scope="col">数额 (USDT) </th></thead>';
                 for(i = 0; i < response.data.data.length; i++)
@@ -281,7 +306,7 @@
                 content += `<button class="btn btn-outline-success my-2 my-sm-0" onclick="Search('withdraw')">搜索</button>`;
                 content += `</div>`;
 
-                content += '<table class="table table-bordered align-middle table-hover">';
+                content += '<table class="table table-bordered align-middle table-hover table-sm">';
                 
                 content += '<thead><tr><th scope="col">订单号</th><th scope="col">发款地址</th><th scope="col">收款地址</th><th scope="col">游戏ID</th><th scope="col">时间</th><th scope="col">数额 (USDT) </th></tr></thead>';
                 for(i = 0; i < response.data.data.length; i++)
@@ -363,7 +388,7 @@
                 content += `<button class="btn btn-outline-success my-2 my-sm-0" onclick="Search('changelog')">搜索</button>`;
                 content += `</div>`;
 
-                content += '<table class="table table-bordered align-middle table-hover">';
+                content += '<table class="table table-bordered align-middle table-hover table-sm">';
 
                 content += '<thead><tr><th scope="col">订单号</th><th scope="col">钱包地址</th><th scope="col">游戏ID</th><th scope="col">时间</th><th scope="col">更变前数额</th><th scope="col">数额</th><th scope="col">更变后数额</th></tr></thead>';
 
@@ -403,41 +428,54 @@
             });
     }
     
-    function getActionLog(page)
+    function getActionLog(page, action_id=null, user_id=null, action=null, startTime=null, endTime=null)
     {
-        //action_log
-        axios.get("https://paysystem.onrender.com/actionlog/get/"+page, {
-            headers: { Authorization: `Bearer ${token}` }
-          })
-          .then(response => {
-            
-            var content = '<br><table class="table table-bordered align-middle">';
-            content += '<thead><tr><th scope="col">ID</th><th scope="col">用户</th><th scope="col">操作内容</th><th scope="col">时间</th></tr></thead>';
-            for(i = 0; i < response.data.data.length; i++)
-            {
-                axios.get("https://paysystem.onrender.com/user/get/"+response.data.data[i]['user_id'], {
-                    headers: { Authorization: `Bearer ${token}` }
-                })
-                .then(response2 => {
-                    var username = response2.data[0]['username'];
+        var url = "https://paysystem.onrender.com/actionlog/get/";
 
+        url += "?page="+page;
+
+        if(action_id)
+            url += "&action_id="+action_id;
+        if(user_id)
+            url += "&user_id="+user_id;
+        if(action)
+            url += "&action="+action;
+        if(startTime)
+            url += "&startTime="+startTime;
+        if(endTime)
+            url += "&endTime="+endTime;
+            
+        axios.get(url, {
+            headers: { Authorization: `Bearer ${token}` }
+        })
+            .then(response => {
+            
+                var content = `<div class="input-group">`;
+                content += `<input type="text" id="action_id" class="form-control" placeholder="ID" value="`+(action_id == null ? "" : action_id)+`">`;
+                content += `<input type="text" id="action_user" class="form-control" placeholder="操作用户" value="`+(user_id == null ? "" : user_id)+`">`;
+                content += `<input type="text" id="action_user" class="form-control" placeholder="操作内容" value="`+(user_id == null ? "" : user_id)+`">`;
+                content += `<input type="text" id="action_start_time" class="form-control" placeholder="开始时间" onfocus="(this.type='date')" onblur="(this.type='text')" value="`+(startTime == null ? "" : startTime)+`">`;
+                content += `<input type="text" id="action_end_time" class="form-control" placeholder="结束时间" onfocus="(this.type='date')" onblur="(this.type='text')" value="`+(endTime == null ? "" : endTime)+`">`;
+                content += `<button class="btn btn-outline-success my-2 my-sm-0" onclick="Search('alarm')">搜索</button>`;
+                content += `</div>`;
+                content += '<br><table class="table table-bordered align-middle table-hover table-sm">';
+                content += '<thead><tr><th scope="col">ID</th><th scope="col">用户</th><th scope="col">操作内容</th><th scope="col">时间</th></tr></thead>';
+                
+                for(var i = 0; i < response.data.data.length; i++)
+                {
                     content += "<tr>";
                     content += "<td>"+response.data.data[i]['id']+"</td>";
-                    content += "<td>"+username+"</td>";
+                    content += "<td>"+response.data.data[i]['username']+"</td>";
                     content += "<td>"+response.data.data[i]['action']+"</td>";
                     content += "<td>"+response.data.data[i]['datetime']+"</td>";
                     content += "</tr>";
-                })
-                .catch(error => {
-                    showErrorModal(error.response);
-                    console.log(error);
-                });
-            }
-            content += "</table>";
-            
-            SetupPaginator(3, response.data.currentPage, response.data.totalPages, response.data.totalItems);
+                }
 
-            document.getElementById('nav-action-log').innerHTML = content;
+                content += "</table>";
+                
+                SetupPaginator(3, response.data.currentPage, response.data.totalPages, response.data.totalItems);
+
+                document.getElementById('nav-action-log').innerHTML = content;
           })
           .catch(error => {
               showErrorModal(error.response);
@@ -445,9 +483,54 @@
           });
     }
 
-    function getAlarm(page)
+    function getAlarm(page, alarmId=null, uid=null, time=null, orderList=null)
     {
+        const audio = document.getElementById('alarm');
 
+        axios.get("https://paysystem.onrender.com/alarm/get/", {
+            headers: { Authorization: `Bearer ${token}` }
+          })
+          .then(response => {
+
+            var content = `<div class="input-group">`;
+            content += `<input type="text" id="alarm_id" class="form-control" placeholder="警报ID" value="`+(alarmId == null ? "" : alarmId)+`">`;
+            content += `<input type="text" id="alarm_uid" class="form-control" placeholder="游戏ID" value="`+(uid == null ? "" : uid)+`">`;
+            content += `<input type="text" id="alarm_time" class="form-control" placeholder="时间" onfocus="(this.type='date')" onblur="(this.type='text')" value="`+(time == null ? "" : time)+`">`;
+            content += `<input type="text" id="alarm_order_list" class="form-control" placeholder="关联订单" value="`+(orderList == null ? "" : orderList)+`">`;
+            content += `<button class="btn btn-outline-success my-2 my-sm-0" onclick="Search('alarm')">搜索</button>`;
+            content += `</div>`;
+
+            content += '<table class="table table-bordered align-middle table-hover table-sm">';
+            content += '<thead><tr><th scope="col">警报ID</th><th scope="col">游戏ID</th><th scope="col">时间</th><th scope="col">关联订单</th><th scope="col">状态</th><th scope="col">设置</th></tr></thead>';
+
+            for(i = 0; i < response.data.data.length; i++)
+            {
+                content += "<tr>";
+                content += "<td>"+response.data.data[i]['id']+"</td>";
+                content += "<td>"+response.data.data[i]['uid']+"</td>";
+                content += "<td>"+response.data.data[i]['time']+"</td>";
+                content += "<td>"+response.data.data[i]['order_list']+"</td>";
+                content += "<td>"+response.data.data[i]['status']+"</td>";
+                content += `<td><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="status_switch" checked></div></td>`;
+                content += "</tr>";
+
+                if(response.data[i].status == 0)
+                {
+                    audio.Stop();
+                    audio.play();
+                }
+            }
+            content += "</table>";
+
+            SetupPaginator(4, response.data.currentPage, response.data.totalPages, response.data.totalItems);
+
+            document.getElementById('nav-alarm').innerHTML = content;
+
+          })
+          .catch(error => {
+              showErrorModal(error.response);
+              console.log(error);
+          });
     }
 
     function getSetting()
@@ -495,7 +578,7 @@
             headers: { Authorization: `Bearer ${token}` }
           })
           .then(response => {
-            
+            showModal(response.data);
           })
           .catch(error => {
               showErrorModal(error.response);
@@ -595,7 +678,12 @@
                     getChangeLog(1, orderId, address, uid, start_time, end_time, amount);
                     break;
                 case 3:
-                    getActionLog(1);
+                    var action_id = document.getElementById("action_id").value;
+                    var user_id = document.getElementById("action_user").value;
+                    var start_time = document.getElementById("action_start_time").value;
+                    var end_time = document.getElementById("action_end_time").value;
+
+                    getActionLog(1, action_id, user_id, start_time, end_time);
                     break;
                 case 4:
                     getAlarm(1);
@@ -657,7 +745,12 @@
                         getChangeLog(i, orderId, address, uid, start_time, end_time, amount);
                         break;
                     case 3:
-                        getActionLog(i);
+                        var action_id = document.getElementById("action_id").value;
+                        var user_id = document.getElementById("action_user").value;
+                        var start_time = document.getElementById("action_start_time").value;
+                        var end_time = document.getElementById("action_end_time").value;
+
+                        getActionLog(i, action_id, user_id, start_time, end_time);
                         break;
                     case 4:
                         getAlarm(i);
@@ -714,7 +807,12 @@
                     getChangeLog(totalPages, orderId, address, uid, start_time, end_time, amount);
                     break;
                 case 3:
-                    getActionLog(totalPages);
+                    var action_id = document.getElementById("action_id").value;
+                    var user_id = document.getElementById("action_user").value;
+                    var start_time = document.getElementById("action_start_time").value;
+                    var end_time = document.getElementById("action_end_time").value;
+
+                    getActionLog(totalPages, action_id, user_id, start_time, end_time);
                     break;
                 case 4:
                     getAlarm(totalPages);
@@ -774,11 +872,10 @@
                 
                 break;
         }
-
-        
     }
-    //#endregion
 
+    //#endregion
+    
     getDepositRequest(1);
     setInterval(Timer, 1000);
 
