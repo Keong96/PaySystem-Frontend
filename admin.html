@@ -378,6 +378,8 @@
         })
             .then(response => {
 
+                alert(response.data);
+                
                 var content = `<div class="input-group">`;
                 content += `<input type="text" id="changelog_id" class="form-control" placeholder="订单号" value="`+(orderId == null ? "" : orderId)+`">`;
                 content += `<input type="text" id="changelog_address" class="form-control" placeholder="钱包地址" value="`+(address == null ? "" : address)+`">`;
@@ -466,7 +468,17 @@
                     content += "<tr>";
                     content += "<td>"+response.data.data[i]['id']+"</td>";
                     content += "<td>"+response.data.data[i]['username']+"</td>";
-                    content += "<td>"+response.data.data[i]['action']+"</td>";
+                    
+                    switch(response.data.data[i]['action'])
+                    {
+                        case "login":
+                            content += "<td>登录</td>";
+                            break;
+                        case "changeSetting":
+                            content += "<td>修改汇率</td>";
+                            break;
+                    }
+
                     content += "<td>"+response.data.data[i]['datetime']+"</td>";
                     content += "</tr>";
                 }
