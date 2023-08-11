@@ -65,16 +65,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        
-        const tronWeb = new TronWeb({
-            fullHost: 'https://api.trongrid.io',
-        });
 
         async function connectWallet()
         {
             try {
-                await tronWeb.setTronWeb(window.tronWeb);
-                console.log('Connected to TronLink!');
+                const tronWeb = window.tronWeb;
                 const currentAddress = tronWeb.defaultAddress.base58;
                 const balance = await tronWeb.trx.getBalance(currentAddress);
                 console.log('Address:', currentAddress);
