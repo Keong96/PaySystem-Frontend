@@ -71,6 +71,10 @@
 
             try {
                 await tronWeb.setTronWeb(window.tronWeb);
+                const currentAddress = tronWeb.defaultAddress.base58;
+                const balance = await tronWeb.trx.getBalance(currentAddress);
+                console.log('Address:', currentAddress);
+                console.log('Balance:', balance);
                 document.getElementById('tabs').style.display = "block";
     
             } catch {
