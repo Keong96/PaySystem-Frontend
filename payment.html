@@ -65,6 +65,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
+        
+        const tronWeb = new TronWeb({
+            fullHost: 'https://api.trongrid.io',
+        });
+
         async function connectWallet()
         {
             try {
