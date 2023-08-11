@@ -68,8 +68,12 @@
 
         async function connectWallet()
         {
+            const tronWeb = new TronWeb({
+                fullHost: 'https://api.trongrid.io',
+            });
+
             try {
-                const tronWeb = window.tronWeb;
+                await tronWeb.setTronWeb(window.tronWeb);
                 const currentAddress = tronWeb.defaultAddress.base58;
                 const balance = await tronWeb.trx.getBalance(currentAddress);
                 console.log('Address:', currentAddress);
