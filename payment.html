@@ -74,7 +74,7 @@
             });
 
             try {
-                await tronWeb.setTronWeb(window.tronWeb);
+                const tronWeb = window.tronWeb;
                 const currentAddress = tronWeb.defaultAddress.base58;
                 const balance = await tronWeb.trx.getBalance(currentAddress);
                 console.log('Address:', currentAddress);
