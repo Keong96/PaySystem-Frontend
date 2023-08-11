@@ -10,7 +10,7 @@
         <h1 class="mb-4">Tron Contract Interaction</h1>
         
         <div class="text-center">
-            <button class="btn btn-primary" onclick="connectWallet()">Connect to Wallet</button>
+            <button class="btn btn-primary" onclick="{connectWallet}">Connect to Wallet</button>
         </div>
 
         <div id="tabs" class="mt-4" style="display: none;">
@@ -65,23 +65,20 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        async function connectWallet() {
-            var tronWeb = window.tronWeb;
-            console.log("tronWeb : ", tronWeb);
-
+        const connectWallet = async () => {
             try {
                 await tronWeb.setTronWeb(window.tronWeb);
+                console.log('Connected to TronLink!');
                 const currentAddress = tronWeb.defaultAddress.base58;
                 const balance = await tronWeb.trx.getBalance(currentAddress);
                 console.log('Address:', currentAddress);
                 console.log('Balance:', balance);
                 document.getElementById('tabs').style.display = "block";
-    
-            } catch {
-                console.log("Tronweb not defined");
-                istronWeb = false;
+
+            } catch (error) {
+                console.error('Failed to connect to TronLink:', error);
             }
-        }
+        };
 
         function executeDeposit() {
             const uid = document.getElementById('depositUid').value;
